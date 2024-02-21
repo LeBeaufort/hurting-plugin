@@ -1,3 +1,5 @@
+#include "sentences.h"
+
 #include <swiftly/swiftly.h>
 #include <swiftly/server.h>
 #include <swiftly/database.h>
@@ -15,6 +17,7 @@ Configuration *config = nullptr;
 Logger *logger = nullptr;
 Timers *timers = nullptr;
 
+
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
     Swiftly_Setup(pluginName, mainFilePath);
@@ -29,7 +32,9 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 
 void OnPluginStart()
 {
-    print("Hurting-Plugin started \n");
+
+    print("[Hurting-Plugin] started \n");
+
 }
 
 void OnPluginStop()
@@ -64,7 +69,14 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
     //first, we check if the player self-flashed
     if (player == attacker && duration > 0.5)
     {
-        player->SendMsg(HudDestination(4), "ha, you so good, you flashed yourself");
-        print("ha, you so good, you flashed yourself");
+        const char *message = GetSelfFlashSentence();
+        player->SendMsg(HudDestination(4), message);
+        //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
+    }
+    else if (player->team == attacker->team)
+    {
+        const char *message = GetTeamFlashSentence();
+        player->SendMsg(HudDestination(4), message);
+        //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
 }
