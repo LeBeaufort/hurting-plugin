@@ -1,4 +1,4 @@
-#include "sentences.h"
+#include "sentences.hpp"
 
 #include <swiftly/swiftly.h>
 #include <swiftly/server.h>

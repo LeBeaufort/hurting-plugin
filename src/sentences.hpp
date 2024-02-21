@@ -1,5 +1,5 @@
-#ifndef SENTENCES_H
-#define SENTENCES_H
+#ifndef SENTENCES_HPP
+#define SENTENCES_HPP
 
 
 const char* GetSelfFlashSentence();
