@@ -80,3 +80,9 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
 }
+
+void OnPlayerFallDamage(Player* player, float damage)
+{
+    const char *message = GetFallDamamageSentence();
+    player->SendMsg(HudDestination(4), message);
+}

@@ -4,5 +4,6 @@
 
 const char* GetSelfFlashSentence();
 const char* GetTeamFlashSentence();
+const char* GetFallDamamageSentence();
 
 #endif

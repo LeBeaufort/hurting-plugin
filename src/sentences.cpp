@@ -27,3 +27,13 @@ const char* GetTeamFlashSentence()
     return sentences[rand() % len];
 }
 
+const char* GetFallDamamageSentence()
+{
+    const char* sentences[] = {"the ground is better at this game", "maybe you should try to shoot at the ground for get a kill"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+     return sentences[rand() % len];
+}
+
