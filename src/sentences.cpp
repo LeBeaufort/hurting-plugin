@@ -34,7 +34,7 @@ const char* GetFallDamamageSentence()
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
 
-     return sentences[rand() % len];
+    return sentences[rand() % len];
 }
 
 const char* GetTeamKillSentence()
@@ -43,5 +43,27 @@ const char* GetTeamKillSentence()
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+const char* GetAssistOnMateSentence()
+{
+    const char* sentences[] = {"GG, you helped your team mate to die !", "Are you sure what is your team ?", "enemies are thanking you"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+const char* GetAssistSentence()
+{
+    const char* sentences[] = {"Maybe next time you could kill him ?", "Nice start, try again"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
 }
 

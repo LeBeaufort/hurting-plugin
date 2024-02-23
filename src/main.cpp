@@ -89,12 +89,27 @@ void OnPlayerFallDamage(Player* player, float damage)
 
 void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assistedflash, const char* weapon, bool headshot, short dominated, short revenge, short wipe, short penetrated, bool noreplay, bool noscope, bool thrusmoke, bool attackerblind, float distance, short dmg_health, short dmg_armor, short hitgroup)
 {
+    // checking if the player and the attacker are valids players
     if (player and attacker)
     {
+        // we check for team kill
         if (player->team == attacker->team)
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
         }
+
     }
+
+    //we check if the assister is a valid player
+    if (assister)
+    {
+        //we check if a teammate assist an enemy
+        if (assister->team == player->team)
+        {
+            const char* msg = GetTeamKillSentence();
+            assister->SendMsg(HudDestination(4), msg);
+        }
+    }
+    
 }
