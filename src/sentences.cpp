@@ -37,3 +37,11 @@ const char* GetFallDamamageSentence()
      return sentences[rand() % len];
 }
 
+const char* GetTeamKillSentence()
+{
+    const char* sentences[] = {"I'm not doctor but i think you have vision trouble", "wrong person...", "are you doing this on purpose?"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+}
+

@@ -86,3 +86,15 @@ void OnPlayerFallDamage(Player* player, float damage)
     const char *message = GetFallDamamageSentence();
     player->SendMsg(HudDestination(4), message);
 }
+
+void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assistedflash, const char* weapon, bool headshot, short dominated, short revenge, short wipe, short penetrated, bool noreplay, bool noscope, bool thrusmoke, bool attackerblind, float distance, short dmg_health, short dmg_armor, short hitgroup)
+{
+    if (player and attacker)
+    {
+        if (player->team == attacker->team)
+        {
+            const char* msg = GetTeamKillSentence();
+            attacker->SendMsg(HudDestination(4), msg);
+        }
+    }
+}
