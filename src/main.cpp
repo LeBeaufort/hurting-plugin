@@ -92,6 +92,10 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
     // checking if the player and the attacker are valids players
     if (player and attacker)
     {
+
+        //we send a death message to the player
+        attacker->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
+
         // we check for team kill
         if (player->team == attacker->team)
         {

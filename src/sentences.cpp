@@ -1,6 +1,7 @@
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
+#include <vector>
 
 const char* GetSelfFlashSentence()
 {
@@ -67,3 +68,23 @@ const char* GetAssistSentence()
     return sentences[rand() % len];
 }
 
+const char* GetDeathSentence(int team)
+{
+    std::vector<const char*> sentences = {"Please stop dieing and help your team", "Yeah, you are feeding the enemy"};
+
+
+    if (team == 3)
+    {
+        sentences.push_back("Maybe you could help your mates to stop T pushes instead of dieing");
+    }
+    else if (team == 4)
+    {
+        sentences.push_back("Stop feeding and help your mates to plant");
+        sentences.push_back("your role is to have extra smokes and flashes for your team");
+    }
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}

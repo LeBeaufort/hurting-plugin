@@ -8,5 +8,6 @@ const char* GetFallDamamageSentence();
 const char* GetTeamKillSentence();
 const char* GetAssistOnMateSentence();
 const char* GetAssistSentence();
+const char* GetDeathSentence(int team);
 
 #endif
