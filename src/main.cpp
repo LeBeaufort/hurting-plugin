@@ -73,7 +73,7 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         player->SendMsg(HudDestination(4), message);
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
-    else if (player->team == attacker->team)
+    else if (player->team == attacker->team && duration > 1.1)
     {
         const char *message = GetTeamFlashSentence();
         player->SendMsg(HudDestination(4), message);
