@@ -111,7 +111,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         //we check if a teammate assist an enemy
         if (assister->team == player->team)
         {
-            const char* msg = GetTeamKillSentence();
+            const char* msg = GetAssistOnMateSentence();
             assister->SendMsg(HudDestination(4), msg);
         }
     }
