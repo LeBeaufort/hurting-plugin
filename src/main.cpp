@@ -67,7 +67,7 @@ const char *GetPluginWebsite()
 void OnPlayerBlind(Player* player, Player* attacker, short entityid, float duration)
 {
     //first, we check if the player self-flashed
-    if (player == attacker && duration > 0.5)
+    if (player == attacker && duration > 1.1)
     {
         const char *message = GetSelfFlashSentence();
         player->SendMsg(HudDestination(4), message);
@@ -94,7 +94,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
     {
 
         //we send a death message to the player
-        attacker->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
+        player->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
 
         // we check for team kill
         if (player->team == attacker->team)
