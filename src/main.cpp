@@ -32,9 +32,9 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 
 void OnPluginStart()
 {
-
-    print("[Hurting-Plugin] started \n");
-
+    std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " started \n";
+    
+    print(message.c_str());
 }
 
 void OnPluginStop()
@@ -79,12 +79,6 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         player->SendMsg(HudDestination(4), message);
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
-}
-
-void OnPlayerFallDamage(Player* player, float damage)
-{
-    const char *message = GetFallDamamageSentence();
-    player->SendMsg(HudDestination(4), message);
 }
 
 void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assistedflash, const char* weapon, bool headshot, short dominated, short revenge, short wipe, short penetrated, bool noreplay, bool noscope, bool thrusmoke, bool attackerblind, float distance, short dmg_health, short dmg_armor, short hitgroup)
