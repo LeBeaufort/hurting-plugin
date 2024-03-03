@@ -73,6 +73,7 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         player->SendMsg(HudDestination(4), message);
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
+    //we check for team flash
     else if (player->team == attacker->team && duration > 1.1)
     {
         const char *message = GetTeamFlashSentence();
@@ -89,12 +90,19 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
 
         //we send a death message to the player
         player->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
+        
 
         // we check for team kill
         if (player->team == attacker->team)
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
+        }
+        // if it is not, we show a death message
+        else
+        {
+            const char* message = GetKillSentence();
+            attacker->SendMsg(HudDestination(4), message);
         }
 
     }

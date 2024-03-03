@@ -88,3 +88,14 @@ const char* GetDeathSentence(int team)
 
     return sentences[rand() % len];
 }
+
+const char* GetKillSentence()
+{
+    std::vector<const char*> sentences = {"It was luck", "yeah ! first time you helped your team !", "finaly !"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+    
+}
