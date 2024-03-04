@@ -70,7 +70,7 @@ const char* GetAssistSentence()
 
 const char* GetDeathSentence(int team)
 {
-    std::vector<const char*> sentences = {"Please stop dieing and help your team", "Yeah, you are feeding the enemy"};
+    std::vector<const char*> sentences = {"Please stop dying and help your team", "Yeah, you are feeding the enemy"};
 
 
     if (team == 3)
@@ -91,7 +91,7 @@ const char* GetDeathSentence(int team)
 
 const char* GetKillSentence()
 {
-    std::vector<const char*> sentences = {"It was luck", "yeah ! first time you helped your team !", "finaly !"};
+    std::vector<const char*> sentences = {"It was luck", "yeah ! first time you helped your team !", "finally !"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
