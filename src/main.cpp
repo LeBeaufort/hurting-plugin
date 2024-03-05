@@ -59,7 +59,7 @@ const char *GetPluginName()
 
 const char *GetPluginWebsite()
 {
-    return "https://github.com/LeBeaufort/hurting-plugin";
+    return "";
 }
 
 
