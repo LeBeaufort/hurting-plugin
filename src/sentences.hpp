@@ -10,5 +10,6 @@ const char* GetAssistOnMateSentence();
 const char* GetAssistSentence();
 const char* GetDeathSentence(int team);
 const char* GetKillSentence();
+const char* GetChatSentence(bool teamonly);
 
 #endif

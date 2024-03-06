@@ -39,7 +39,7 @@ void OnPluginStart()
 
 void OnPluginStop()
 {
-    print("Hurting-plugin stoped");
+    print("Hurting-plugin stopped");
 }
 
 const char *GetPluginAuthor()
@@ -59,7 +59,7 @@ const char *GetPluginName()
 
 const char *GetPluginWebsite()
 {
-    return "";
+    return "https://github.com/LeBeaufort/hurting-plugin";
 }
 
 
@@ -118,4 +118,10 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         }
     }
     
+}
+
+bool OnPlayerChat(Player* player, const char* text, bool teamonly)
+{
+    const char* msg = GetChatSentence(teamonly);
+    player->SendMsg(HudDestination(4), msg);
 }

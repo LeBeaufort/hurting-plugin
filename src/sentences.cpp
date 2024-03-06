@@ -99,3 +99,23 @@ const char* GetKillSentence()
     return sentences[rand() % len];
     
 }
+
+const char* GetChatSentence(bool teamonly)
+{
+    std::vector<const char*> team = {"Maybe you should use voice chat ?", "do you know what VC stand for ? It doesn't mean \"Very Convenient\" even if it is"};
+    std::vector<const char*> general = {"Do you really talk in the general chat ?", "<img src=\"https://media.tenor.com/vi0bP5tmmIwAAAAM/who-cares.gif\" width=\"262.5\" height=\"262.5\" alt=\"Who Cares GIF - Who Cares GIFs\" loading=\"lazy\">"};
+
+    std::vector<const char*> & sentences = { general };
+
+    if (teamonly)
+    {
+        // this is a team message
+        std::vector<const char*> & sentences = { team };
+    }
+    // if it is a general message, we have nothing to do because it is already on the general vector
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
