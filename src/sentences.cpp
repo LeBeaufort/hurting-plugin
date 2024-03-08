@@ -91,7 +91,7 @@ const char* GetDeathSentence(int team)
 
 const char* GetKillSentence()
 {
-    std::vector<const char*> sentences = {"It was luck", "yeah ! first time you helped your team !", "finaly !"};
+    std::vector<const char*> sentences = {"It was luck", "yeah ! first time you helped your team !", "finally !"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
@@ -113,6 +113,27 @@ const char* GetChatSentence(bool teamonly)
         std::vector<const char*> & sentences = { team };
     }
     // if it is a general message, we have nothing to do because it is already on the general vector
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+
+const char* GetDecoyStartSetence()
+{
+    std::vector<const char*> sentences = {"This decoy is useful as you", "We could say it is your clone, you only make diversion too", "This is actually a decoy and not a flashbang"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+const char* GetDecoyStopSetence()
+{
+    std::vector<const char*> sentences = {"Your clone just die !", "OK", "This decoy help us, we'll remember"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);

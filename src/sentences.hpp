@@ -11,5 +11,7 @@ const char* GetAssistSentence();
 const char* GetDeathSentence(int team);
 const char* GetKillSentence();
 const char* GetChatSentence(bool teamonly);
+const char* GetDecoyStartSetence();
+const char* GetDecoyStopSetence();
 
 #endif

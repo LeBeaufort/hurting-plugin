@@ -125,3 +125,15 @@ bool OnPlayerChat(Player* player, const char* text, bool teamonly)
     const char* msg = GetChatSentence(teamonly);
     player->SendMsg(HudDestination(4), msg);
 }
+
+void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
+{
+    const char* msg = GetDecoyStartSetence();
+    player->SendMsg(HudDestination(4), msg);
+}
+
+void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
+{
+    const char* msg = GetDecoyStopSetence();
+    player->SendMsg(HudDestination(4), msg);
+}
