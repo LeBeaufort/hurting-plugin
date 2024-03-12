@@ -30,7 +30,7 @@ const char* GetTeamFlashSentence()
 
 const char* GetFallDamamageSentence()
 {
-    const char* sentences[] = {"the ground is better at this game", "maybe you should try to shoot at the ground for get a kill"};
+    const char* sentences[] = {"the ground is better than you at this game", "maybe you should try to shoot at the ground for get a kill"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
@@ -134,6 +134,16 @@ const char* GetDecoyStartSetence()
 const char* GetDecoyStopSetence()
 {
     std::vector<const char*> sentences = {"Your clone just die !", "OK", "This decoy help us, we'll remember"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+const char* GetFakeFailedSentence()
+{
+    std::vector<const char*> sentences = {"Nice fake", "maybe next time you will got it ?"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);

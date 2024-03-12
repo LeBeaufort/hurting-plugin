@@ -13,5 +13,6 @@ const char* GetKillSentence();
 const char* GetChatSentence(bool teamonly);
 const char* GetDecoyStartSetence();
 const char* GetDecoyStopSetence();
+const char* GetFakeFailedSentence();
 
 #endif

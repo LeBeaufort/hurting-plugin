@@ -1,4 +1,7 @@
 #include "sentences.hpp"
+#include "playereventsmanager.hpp"
+#include <string>
+#include <ctime>
 
 #include <swiftly/swiftly.h>
 #include <swiftly/server.h>
@@ -16,6 +19,8 @@ Commands *commands = nullptr;
 Configuration *config = nullptr;
 Logger *logger = nullptr;
 Timers *timers = nullptr;
+
+PlayerEventsManager manager;
 
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
@@ -85,26 +90,32 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
 void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assistedflash, const char* weapon, bool headshot, short dominated, short revenge, short wipe, short penetrated, bool noreplay, bool noscope, bool thrusmoke, bool attackerblind, float distance, short dmg_health, short dmg_armor, short hitgroup)
 {
     // checking if the player and the attacker are valids players
-    if (player and attacker)
+    if (player && attacker)
     {
-
-        //we send a death message to the player
-        player->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
-        
-
-        // we check for team kill
+        // we check for a team kill
         if (player->team == attacker->team)
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
         }
-        // if it is not, we show a death message
+        // we check for failed fake
+        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3 && std::time(0) - manager.getTimeithappen("abortDP", player) > 0.3)
+        {
+            const char* msg = GetFakeFailedSentence();
+            player->SendMsg(HudDestination(4), msg);
+        }
         else
         {
+            // if no condition match we display this
+            player->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
+        }
+         
+        if (player->team == attacker->team)
+        {
+            //we send a kill message to the player
             const char* message = GetKillSentence();
             attacker->SendMsg(HudDestination(4), message);
         }
-
     }
 
     //we check if the assister is a valid player
@@ -124,6 +135,7 @@ bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
     const char* msg = GetChatSentence(teamonly);
     player->SendMsg(HudDestination(4), msg);
+    return true;
 }
 
 void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
@@ -136,4 +148,16 @@ void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
 {
     const char* msg = GetDecoyStopSetence();
     player->SendMsg(HudDestination(4), msg);
+}
+
+
+
+//this update manager data
+void BombAbortDefuse(Player* player, unsigned short site)
+{
+    manager.add_event("abortDP", player);
+}
+void BombAbortPlant(Player* player, unsigned short site)
+{
+    manager.add_event("abortDP", player);
 }
