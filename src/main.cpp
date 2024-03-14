@@ -161,3 +161,14 @@ void BombAbortPlant(Player* player, unsigned short site)
 {
     manager.add_event("abortDP", player);
 }
+
+void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
+{
+    //first of all we clear PlayerEventsManager
+    manager.clear();
+
+    //we send a message in the general chat
+    std::string msg = GetRoundEndSentence();
+    msg = "{LIGHTBLUE}" + msg + "{LIGHTBLUE}";
+    g_playerManager->SendMsg(HudDestination(1), msg.c_str());
+}

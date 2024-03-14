@@ -1,6 +1,7 @@
 #ifndef SENTENCES_HPP
 #define SENTENCES_HPP
 
+#include <string>
 
 const char* GetSelfFlashSentence();
 const char* GetTeamFlashSentence();
@@ -14,5 +15,6 @@ const char* GetChatSentence(bool teamonly);
 const char* GetDecoyStartSetence();
 const char* GetDecoyStopSetence();
 const char* GetFakeFailedSentence();
+std::string GetRoundEndSentence();
 
 #endif

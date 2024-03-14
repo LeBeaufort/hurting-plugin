@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <vector>
+#include <string>
 
 const char* GetSelfFlashSentence()
 {
@@ -144,6 +145,16 @@ const char* GetDecoyStopSetence()
 const char* GetFakeFailedSentence()
 {
     std::vector<const char*> sentences = {"Nice fake", "maybe next time you will got it ?"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
+
+std::string GetRoundEndSentence()
+{
+    std::vector<std::string> sentences = {"EZ", "worst round I ever seen", "I want to say, nobody here is good at this game"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
