@@ -15,6 +15,6 @@ const char* GetChatSentence(bool teamonly);
 const char* GetDecoyStartSetence();
 const char* GetDecoyStopSetence();
 const char* GetFakeFailedSentence();
-std::string GetRoundEndSentence();
+const char* GetRoundEndSentence();
 
 #endif

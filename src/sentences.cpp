@@ -20,7 +20,7 @@ const char* GetSelfFlashSentence()
 const char* GetTeamFlashSentence()
 {
     //this function return a sentence if someone flash a team mate
-    const char* sentences[] = {"bro that not an enemy, that a teammate", "you are not supposed to flash this person..."};
+    const char* sentences[] = {"bro that not an enemy, that a teammate", "you are not supposed to flash this person...", "please learn how to use flashbang"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
@@ -71,12 +71,12 @@ const char* GetAssistSentence()
 
 const char* GetDeathSentence(int team)
 {
-    std::vector<const char*> sentences = {"Please stop dieing and help your team", "Yeah, you are feeding the enemy"};
+    std::vector<const char*> sentences = {"Please stop dying and help your team", "Yeah, you are feeding the enemy"};
 
 
     if (team == 3)
     {
-        sentences.push_back("Maybe you could help your mates to stop T pushes instead of dieing");
+        sentences.push_back("Maybe you could help your mates to stop T pushes instead of dying");
     }
     else if (team == 4)
     {
@@ -152,9 +152,9 @@ const char* GetFakeFailedSentence()
     return sentences[rand() % len];
 }
 
-std::string GetRoundEndSentence()
+const char* GetRoundEndSentence()
 {
-    std::vector<std::string> sentences = {"EZ", "worst round I ever seen", "I want to say, nobody here is good at this game"};
+    std::vector<const char*> sentences = {"EZ", "worst round I ever seen", "I want to say, nobody here is good at this game"};
 
     srand(time(NULL));
     unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);

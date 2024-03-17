@@ -72,14 +72,14 @@ const char *GetPluginWebsite()
 void OnPlayerBlind(Player* player, Player* attacker, short entityid, float duration)
 {
     //first, we check if the player self-flashed
-    if (player == attacker && duration > 1.1)
+    if (player == attacker && duration > 1.2)
     {
         const char *message = GetSelfFlashSentence();
         player->SendMsg(HudDestination(4), message);
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
     //we check for team flash
-    else if (player->team == attacker->team && duration > 1.1)
+    else if (player->team->Get() == attacker->team->Get() && duration > 1.2)
     {
         const char *message = GetTeamFlashSentence();
         player->SendMsg(HudDestination(4), message);
@@ -93,14 +93,15 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
     if (player && attacker)
     {
         // we check for a team kill
-        if (player->team == attacker->team)
+        if (player->team->Get() == attacker->team->Get())
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
         }
         // we check for failed fake
-        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3 && std::time(0) - manager.getTimeithappen("abortDP", player) > 0.3)
+        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3)
         {
+            print("Failed fake detected : searching for msg");
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
         }
@@ -108,13 +109,8 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         {
             // if no condition match we display this
             player->SendMsg(HudDestination(4), GetDeathSentence(attacker->team->Get()));
-        }
-         
-        if (player->team == attacker->team)
-        {
-            //we send a kill message to the player
-            const char* message = GetKillSentence();
-            attacker->SendMsg(HudDestination(4), message);
+            //we also display a kill sentence to the killer
+            attacker->SendMsg(HudDestination(4), GetKillSentence());
         }
     }
 
@@ -127,25 +123,45 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             const char* msg = GetAssistOnMateSentence();
             assister->SendMsg(HudDestination(4), msg);
         }
+        else
+        {
+            //if it is not, we display the basic assist sentence
+            const char* msg = GetAssistSentence();
+            assister->SendMsg(HudDestination(4), msg);
+        }
     }
     
 }
 
 bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
-    const char* msg = GetChatSentence(teamonly);
-    player->SendMsg(HudDestination(4), msg);
-    return true;
+    //check if the player ask if hurting plugins is running
+    if (ToLower(text) == "is hurting-plugin running")
+    {
+        print("A player ask if hurting-plugin is running");
+        player->SendMsg(HudDestination(3), "Of course it is !");
+        return true;
+    }
+    else
+    {
+        print("A player text in the chat, but it is not about the status of hurting plugin. Showing message");
+        const char* msg = GetChatSentence(teamonly);
+        player->SendMsg(HudDestination(4), msg);
+        return true;
+    }
+    
 }
 
 void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
 {
+    print("Decoy sarted \n");
     const char* msg = GetDecoyStartSetence();
     player->SendMsg(HudDestination(4), msg);
 }
 
 void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
 {
+    print("Decoy stopped \n");
     const char* msg = GetDecoyStopSetence();
     player->SendMsg(HudDestination(4), msg);
 }
@@ -155,20 +171,23 @@ void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
 //this update manager data
 void BombAbortDefuse(Player* player, unsigned short site)
 {
+    print("Abort defuse called \n");
     manager.add_event("abortDP", player);
 }
 void BombAbortPlant(Player* player, unsigned short site)
 {
+    print("Abort plant called \n");
     manager.add_event("abortDP", player);
 }
 
 void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
 {
+    print("Round End called");
     //first of all we clear PlayerEventsManager
     manager.clear();
 
     //we send a message in the general chat
-    std::string msg = GetRoundEndSentence();
-    msg = "{LIGHTBLUE}" + msg + "{LIGHTBLUE}";
-    g_playerManager->SendMsg(HudDestination(1), msg.c_str());
+    const char* msg = GetRoundEndSentence();
+    
+    g_playerManager->SendMsg(HudDestination(4), msg);
 }
