@@ -37,14 +37,14 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 
 void OnPluginStart()
 {
-    std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " started \n";
+    std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " " + std::string(__TIME__) + " started \n";
     
     print(message.c_str());
 }
 
 void OnPluginStop()
 {
-    print("Hurting-plugin stopped");
+    print("Hurting-plugin stopped \n");
 }
 
 const char *GetPluginAuthor()
@@ -101,7 +101,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         // we check for failed fake
         else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3)
         {
-            print("Failed fake detected : searching for msg");
+            print("Failed fake detected : searching for msg \n");
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
         }
@@ -135,20 +135,8 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
 
 bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
-    //check if the player ask if hurting plugins is running
-    if (ToLower(text) == "is hurting-plugin running")
-    {
-        print("A player ask if hurting-plugin is running");
-        player->SendMsg(HudDestination(3), "Of course it is !");
-        return true;
-    }
-    else
-    {
-        print("A player text in the chat, but it is not about the status of hurting plugin. Showing message");
-        const char* msg = GetChatSentence(teamonly);
-        player->SendMsg(HudDestination(4), msg);
-        return true;
-    }
+    print("Someone used the chat \n");
+    return true;
     
 }
 
@@ -182,7 +170,7 @@ void BombAbortPlant(Player* player, unsigned short site)
 
 void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
 {
-    print("Round End called");
+    print("Round End called \n");
     //first of all we clear PlayerEventsManager
     manager.clear();
 
