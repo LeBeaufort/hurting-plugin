@@ -135,9 +135,8 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
 
 bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
-    print("Someone used the chat \n");
-    return true;
-    
+    const char* msg = GetChatSentence(teamonly);
+    player->SendMsg(HudDestination(4), msg);
 }
 
 void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
@@ -154,7 +153,11 @@ void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
     player->SendMsg(HudDestination(4), msg);
 }
 
-
+void OnPlayerFallDamage(Player* player, float damage)
+{
+    const char* msg = GetFallDamamageSentence();
+    player->SendMsg(HudDestination(4), msg);
+}
 
 //this update manager data
 void BombAbortDefuse(Player* player, unsigned short site)
