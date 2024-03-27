@@ -105,6 +105,11 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
         }
+        else if (std::time(0) - manager.getTimeithappen("reload", player) < 1.5)
+        {
+            const char* msg = GetBadReloadSentence();
+            player->SendMsg(HudDestination(4), msg);
+        }
         else
         {
             // if no condition match we display this
@@ -170,6 +175,10 @@ void BombAbortPlant(Player* player, unsigned short site)
     print("Abort plant called \n");
     manager.add_event("abortDP", player);
 }
+void OnAmmoRefill(Player* player, bool success)
+{
+    manager.add_event("reload", player);
+}
 
 void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
 {
@@ -179,6 +188,5 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
 
     //we send a message in the general chat
     const char* msg = GetRoundEndSentence();
-    
-    g_playerManager->SendMsg(HudDestination(4), msg);
+    g_playerManager->SendMsg(HudDestination(3), msg);
 }

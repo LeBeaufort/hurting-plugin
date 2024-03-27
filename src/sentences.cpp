@@ -161,3 +161,13 @@ const char* GetRoundEndSentence()
 
     return sentences[rand() % len];
 }
+
+const char* GetBadReloadSentence()
+{
+    std::vector<const char*> sentences = {"Bad timing", "...", "I don't think it was the good moment"};
+
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
