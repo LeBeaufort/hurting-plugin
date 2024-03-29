@@ -99,12 +99,12 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             attacker->SendMsg(HudDestination(4), msg);
         }
         // we check for failed fake
-        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3)
+        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3 && std::time(0) - manager.getTimeithappen("abortDP", player) > 0.3)
         {
-            print("Failed fake detected : searching for msg \n");
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
         }
+        // for bad reload
         else if (std::time(0) - manager.getTimeithappen("reload", player) < 1.5)
         {
             const char* msg = GetBadReloadSentence();
