@@ -22,6 +22,7 @@ Timers *timers = nullptr;
 
 PlayerEventsManager manager;
 
+void send_chat_msg();
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
@@ -37,6 +38,8 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 
 void OnPluginStart()
 {
+    timers->RegisterTimer(900, send_chat_msg);
+
     std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " " + std::string(__TIME__) + " started \n";
     
     print(message.c_str());
@@ -189,4 +192,15 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
     //we send a message in the general chat
     const char* msg = GetRoundEndSentence();
     g_playerManager->SendMsg(HudDestination(3), msg);
+}
+
+//some functions 
+void send_chat_msg()
+{
+    // this function send chat message to hurt the server admin about the map
+    char message[75]; // just don't have a map name longer than 21 characters
+    strcat(message, "{GREEN} Are you really playing ");
+    strcat(message, server->GetMap());
+    strcat(message, " ? This is a bad map...");
+    g_playerManager->SendMsg(HudDestination(2), message);
 }
