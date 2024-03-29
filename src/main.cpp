@@ -145,6 +145,7 @@ bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
     const char* msg = GetChatSentence(teamonly);
     player->SendMsg(HudDestination(4), msg);
+    return true;
 }
 
 void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
@@ -197,10 +198,11 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
 //some functions 
 void send_chat_msg()
 {
+    const char *map = server->GetMap();
     // this function send chat message to hurt the server admin about the map
     char message[75]; // just don't have a map name longer than 21 characters
     strcat(message, "{GREEN} Are you really playing ");
-    strcat(message, server->GetMap());
+    strcat(message, map);
     strcat(message, " ? This is a bad map...");
-    g_playerManager->SendMsg(HudDestination(2), message);
+    g_playerManager->SendMsg(HudDestination(3), message);
 }
