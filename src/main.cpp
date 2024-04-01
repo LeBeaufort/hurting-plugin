@@ -11,6 +11,7 @@
 #include <swiftly/logger.h>
 #include <swiftly/timers.h>
 #include <swiftly/gameevents.h>
+#include <swiftly/http.h>
 
 Server *server = nullptr;
 PlayerManager *g_playerManager = nullptr;
@@ -19,10 +20,13 @@ Commands *commands = nullptr;
 Configuration *config = nullptr;
 Logger *logger = nullptr;
 Timers *timers = nullptr;
+HTTP *http = nullptr;
+JSON *json = nullptr;
 
 PlayerEventsManager manager;
 
 void send_chat_msg();
+std::string getCountryCode(const char* ip);
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
@@ -34,14 +38,20 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
     config = new Configuration();
     logger = new Logger(mainFilePath, pluginName);
     timers = new Timers();
+    http = new HTTP();
+    json = new JSON();
 }
 
 void OnPluginStart()
 {
+    //this create the database for the plugin
+    db = new Database("HURTINGP");
+
+    // this send message in the chat about the map
     timers->RegisterTimer(900, send_chat_msg);
 
+    //this send a message on the start of the plugin
     std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " " + std::string(__TIME__) + " started \n";
-    
     print(message.c_str());
 }
 
@@ -205,4 +215,59 @@ void send_chat_msg()
     strcat(message, map);
     strcat(message, " ? This is a bad map...");
     g_playerManager->SendMsg(HudDestination(3), message);
+}
+
+bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type)
+{
+    std::string CC = getCountryCode(ip);
+
+    /*full SQL request is
+    INSERT INTO `database`.`HurtingP_hurts` (`name`, `steamID`, `ip`, `countryCode`, `message`, `type`) VALUES ('name', '012345678912345678', '154.025.654.265', 'fr', 'message', 'type');*/
+    std::string request = "";
+    if (CC != "  ")
+    {
+        request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`, `ip`, `countryCode`, `message`, `type`) VALUES ('";
+    }
+    else
+    {
+        request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`, `ip`, `message`, `type`) VALUES ('";
+    }
+
+    request += std::string(name) + "', '";
+    request += std::to_string(steamID) + "', '";
+    request += std::string(ip) + "', '";
+    if (CC != "  ")
+    {
+        request += CC + "', '";
+    }
+    // if the country code is null, we skip it and insert the message. If it is not we insert it
+    request += std::string(message) + "', '";
+    request += std::string(type) + "');"; //this end the request
+
+    // now we escape the request to prevent SQL injection, then we send it to the database
+    const char* EscapedRequest = db->EscapeString(request.c_str());
+    db->Query(EscapedRequest);
+}
+
+
+std::string getCountryCode(const char* ip)
+{
+    char path[21];
+    strcat(path, "/json/");
+    strcat(path, ip);
+    HTTPRequest* ipAPIrequest = http->GenerateRequest("ip-api.com");
+    ipAPIrequest->Get(path);
+
+    const char* body = ipAPIrequest->GetBody();
+    JSONObject* root = json->Parse(body);
+    if (root)
+    {
+        rapidjson::Document &document = root->document;
+        if (document.HasMember("countryCode") && document["status"].GetBool())
+        {
+            return document["countryCode"].GetString();
+        }
+    }
+
+    return "  ";
 }
