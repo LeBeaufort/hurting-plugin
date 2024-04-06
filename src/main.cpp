@@ -27,6 +27,7 @@ PlayerEventsManager manager;
 
 void send_chat_msg();
 std::string getCountryCode(const char* ip);
+bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
