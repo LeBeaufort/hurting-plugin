@@ -132,7 +132,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         {
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
-            if (! player->IsFakeClient)
+            if (! player->IsFakeClient())
             {
                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "FailedFake");
             }
@@ -274,7 +274,7 @@ void send_chat_msg()
     strcat(message, map);
     strcat(message, " ? This is a bad map...");
     g_playerManager->SendMsg(HudDestination(3), message);
-    add_everyone_to_db(message, "Map")
+    add_everyone_to_db(message, "Map");
     
 }
 
@@ -335,9 +335,15 @@ std::string getCountryCode(const char* ip)
 
 void add_everyone_to_db(const char* msg, const char* type)
 {
-    for (int counter = 0; counter > g_playerManager->GetPlayerCount(); counter++)
+    for (int counter = 0; counter > g_playerManager->GetPlayerCap(); counter++)
     {     
         Player* player = g_playerManager->GetPlayer(counter);
+        if (!player)
+        {
+            continue;
+        }
+
+        
         if (! player->IsFakeClient())
         {
             add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, type);
