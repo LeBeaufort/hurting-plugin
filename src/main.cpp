@@ -28,6 +28,8 @@ PlayerEventsManager manager;
 void send_chat_msg();
 std::string getCountryCode(const char* ip);
 bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
+void add_everyone_to_db(const char* msg, const char* type);
+
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
@@ -90,7 +92,10 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
     {
         const char *message = GetSelfFlashSentence();
         player->SendMsg(HudDestination(4), message);
-        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "selfFlash");
+        if (! player->IsFakeClient())
+        {
+            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "selfFlash");
+        }
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
     //we check for team flash
@@ -98,7 +103,11 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
     {
         const char *message = GetTeamFlashSentence();
         player->SendMsg(HudDestination(4), message);
-        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "teamFlash");
+        if (! player->IsFakeClient())
+        {
+            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "teamFlash");
+        }
+
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
 }
@@ -113,21 +122,30 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "TeamKill");
+            if (! player->IsFakeClient())
+            {
+                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "TeamKill");   
+            }
         }
         // we check for failed fake
         else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3 && std::time(0) - manager.getTimeithappen("abortDP", player) > 0.3)
         {
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "FailedFake");
+            if (! player->IsFakeClient)
+            {
+               add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "FailedFake");
+            }
         }
         // for bad reload
         else if (std::time(0) - manager.getTimeithappen("reload", player) < 1.5)
         {
             const char* msg = GetBadReloadSentence();
             player->SendMsg(HudDestination(4), msg);
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "badReload");
+            if (! player->IsFakeClient())
+            {
+                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "badReload");
+            }
         }
         else
         {
@@ -138,8 +156,14 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             const char* msgA = GetKillSentence();
             attacker->SendMsg(HudDestination(4), msgA);
 
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msgP, "death");
-            add_to_db(attacker->GetName(), attacker->GetSteamID(), attacker->GetIPAddress(), msgA, "kill");
+            if (! player->IsFakeClient())
+            {
+                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msgP, "death");
+            }
+            if (! attacker->IsFakeClient())
+            {
+                add_to_db(attacker->GetName(), attacker->GetSteamID(), attacker->GetIPAddress(), msgA, "kill");
+            }
         }
     }
 
@@ -151,14 +175,20 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
         {
             const char* msg = GetAssistOnMateSentence();
             assister->SendMsg(HudDestination(4), msg);
-            add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assistOnMate");
+            if (! assister->IsFakeClient())
+            {
+                add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assistOnMate");
+            }
         }
         else
         {
             //if it is not, we display the basic assist sentence
             const char* msg = GetAssistSentence();
             assister->SendMsg(HudDestination(4), msg);
-            add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assist");
+            if (! assister->IsFakeClient())
+            {
+                add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assist");
+            }
         }
     }
     
@@ -177,7 +207,11 @@ void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
     print("Decoy sarted \n");
     const char* msg = GetDecoyStartSetence();
     player->SendMsg(HudDestination(4), msg);
-    add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoy");
+    if (! player->IsFakeClient())
+    {
+        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoy");
+    }
+    
 }
 
 void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
@@ -185,14 +219,20 @@ void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
     print("Decoy stopped \n");
     const char* msg = GetDecoyStopSetence();
     player->SendMsg(HudDestination(4), msg);
-    add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoyStop");
+    if (! player->IsFakeClient())
+    {
+        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoyStop");
+    }
 }
 
 void OnPlayerFallDamage(Player* player, float damage)
 {
     const char* msg = GetFallDamamageSentence();
     player->SendMsg(HudDestination(4), msg);
-    add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "fallDamage");
+    if (! player->IsFakeClient())
+    {
+        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "fallDamage");
+    }  
 }
 
 //this update manager data
@@ -220,6 +260,8 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
     //we send a message in the general chat
     const char* msg = GetRoundEndSentence();
     g_playerManager->SendMsg(HudDestination(3), msg);
+    add_everyone_to_db(msg, "RoundEnd");
+
 }
 
 //some functions 
@@ -232,6 +274,7 @@ void send_chat_msg()
     strcat(message, map);
     strcat(message, " ? This is a bad map...");
     g_playerManager->SendMsg(HudDestination(3), message);
+    add_everyone_to_db(message, "Map")
     
 }
 
