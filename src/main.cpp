@@ -289,3 +289,15 @@ std::string getCountryCode(const char* ip)
 
     return "  ";
 }
+
+void add_everyone_to_db(const char* msg, const char* type)
+{
+    for (int counter = 0; counter > g_playerManager->GetPlayerCount(); counter++)
+    {     
+        Player* player = g_playerManager->GetPlayer(counter);
+        if (! player->IsFakeClient())
+        {
+            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, type);
+        }
+    }
+}
