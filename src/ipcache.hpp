@@ -7,7 +7,7 @@
 class IpCache
 {
     private:
-        std::vector<std::string> ip;
+        std::vector<std::string> ips;
         std::vector<std::string> countries;
     
     public:
@@ -16,7 +16,7 @@ class IpCache
         std::string getCountryCode(std::string ip);
         void addToCache(std::string ip, std::string countryCode);
 
-}
+};
 
 
-#endif IPCACHE_HPP
+#endif //IPCACHE_HPP
