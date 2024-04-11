@@ -24,11 +24,12 @@ Timers *timers = nullptr;
 HTTP *http = nullptr;
 JSON *json = nullptr;
 
-PlayerEventsManager manager;
+PlayerEventsManager eventsManager;
+IpCache ipcache;
 
 void send_chat_msg();
 std::string getCountryCode(const char* ip);
-bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
+void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
 void add_everyone_to_db(const char* msg, const char* type);
 
 
@@ -129,7 +130,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             }
         }
         // we check for failed fake
-        else if (std::time(0) - manager.getTimeithappen("abortDP", player) < 3 && std::time(0) - manager.getTimeithappen("abortDP", player) > 0.3)
+        else if (std::time(0) - eventsManager.getTimeithappen("abortDP", player) < 3 && std::time(0) - eventsManager.getTimeithappen("abortDP", player) > 0.3)
         {
             const char* msg = GetFakeFailedSentence();
             player->SendMsg(HudDestination(4), msg);
@@ -139,7 +140,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             }
         }
         // for bad reload
-        else if (std::time(0) - manager.getTimeithappen("reload", player) < 1.5)
+        else if (std::time(0) - eventsManager.getTimeithappen("reload", player) < 1.5)
         {
             const char* msg = GetBadReloadSentence();
             player->SendMsg(HudDestination(4), msg);
@@ -240,23 +241,23 @@ void OnPlayerFallDamage(Player* player, float damage)
 void BombAbortDefuse(Player* player, unsigned short site)
 {
     print("Abort defuse called \n");
-    manager.add_event("abortDP", player);
+    eventsManager.add_event("abortDP", player);
 }
 void BombAbortPlant(Player* player, unsigned short site)
 {
     print("Abort plant called \n");
-    manager.add_event("abortDP", player);
+    eventsManager.add_event("abortDP", player);
 }
 void OnAmmoRefill(Player* player, bool success)
 {
-    manager.add_event("reload", player);
+    eventsManager.add_event("reload", player);
 }
 
 void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
 {
     print("Round End called \n");
     //first of all we clear PlayerEventsManager
-    manager.clear();
+    eventsManager.clear();
 
     //we send a message in the general chat
     const char* msg = GetRoundEndSentence();
@@ -279,7 +280,7 @@ void send_chat_msg()
     
 }
 
-bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type)
+void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type)
 {
     std::string CC = getCountryCode(ip);
 
@@ -314,6 +315,11 @@ bool add_to_db(const char* name, uint64_t steamID, const char* ip, const char* m
 
 std::string getCountryCode(const char* ip)
 {
+    if (ipcache.isCached(ip))
+    {
+        return ipcache.getCountryCode(ip);
+    }
+
     char path[21];
     strcat(path, "/json/");
     strcat(path, ip);
@@ -327,7 +333,9 @@ std::string getCountryCode(const char* ip)
         rapidjson::Document &document = root->document;
         if (document.HasMember("countryCode") && document["status"].GetBool())
         {
-            return document["countryCode"].GetString();
+            std::string country = document["countryCode"].GetString();
+            ipcache.addToCache(ip, country);
+            return country;
         }
     }
 
