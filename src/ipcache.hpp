@@ -15,6 +15,7 @@ class IpCache
         bool isCached(std::string ip);
         std::string getCountryCode(std::string ip);
         void addToCache(std::string ip, std::string countryCode);
+        void clear();
 
 };
 

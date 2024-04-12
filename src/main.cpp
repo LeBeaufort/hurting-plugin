@@ -31,6 +31,7 @@ void send_chat_msg();
 std::string getCountryCode(const char* ip);
 void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
 void add_everyone_to_db(const char* msg, const char* type);
+void resetIpCache();
 
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
@@ -54,6 +55,9 @@ void OnPluginStart()
 
     // this send message in the chat about the map
     timers->RegisterTimer(900, send_chat_msg);
+
+    //we also create a timer to clear the ip cache sometime
+    timers->RegisterTimer(1800, resetIpCache);
 
     //this send a message on the start of the plugin
     std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " " + std::string(__TIME__) + " started \n";
@@ -358,4 +362,9 @@ void add_everyone_to_db(const char* msg, const char* type)
             add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, type);
         }
     }
+}
+
+void resetIpCache()
+{
+    ipcache.clear();
 }

@@ -41,3 +41,8 @@ std::string IpCache::getCountryCode(std::string ip)
     }
 }
 
+void IpCache::clear()
+{
+    this->countries.clear();
+    this->ips.clear();
+}
