@@ -27,13 +27,6 @@ JSON *json = nullptr;
 PlayerEventsManager eventsManager;
 IpCache ipcache;
 
-void send_chat_msg();
-std::string getCountryCode(const char* ip);
-void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
-void add_everyone_to_db(const char* msg, const char* type);
-void resetIpCache();
-
-
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
     Swiftly_Setup(pluginName, mainFilePath);
@@ -47,6 +40,12 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
     http = new HTTP();
     json = new JSON();
 }
+
+void send_chat_msg();
+std::string getCountryCode(const char* ip);
+void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
+void add_everyone_to_db(const char* msg, const char* type);
+void resetIpCache();
 
 void OnPluginStart()
 {
