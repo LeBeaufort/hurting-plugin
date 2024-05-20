@@ -51,6 +51,16 @@ void OnPluginStart()
 {
     //this create the database for the plugin
     db = new Database("HURTINGP");
+    // just check the db is connected
+    if (db->IsConnected())
+    {
+        // if it is connected, we create the table if it is not
+        db->Query("CREATE TABLE IF NOT EXISTS `HurtingP_hurts` (`id` INT NULL AUTO_INCREMENT,`name` VARCHAR(256) NOT NULL,`steamID` DECIMAL(17,0) NOT NULL,`ip` VARCHAR(15) NOT NULL,`countryCode` VARCHAR(2) NULL,`message` VARCHAR(512) NOT NULL,`type` VARCHAR(45) NOT NULL,`hurtTime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (`id`));");  
+    }
+    else
+    {
+        print("[Hurting-Plugin] Failed to connect to the database ! Please check credential \n");
+    }
 
     // this send message in the chat about the map
     timers->RegisterTimer(900, send_chat_msg);
