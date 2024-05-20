@@ -45,7 +45,6 @@ void send_chat_msg();
 std::string getCountryCode(const char* ip);
 void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
 void add_everyone_to_db(const char* msg, const char* type);
-void resetIpCache();
 
 void OnPluginStart()
 {
@@ -62,11 +61,8 @@ void OnPluginStart()
         print("[Hurting-Plugin] Failed to connect to the database ! Please check credential \n");
     }
 
-    // this send message in the chat about the map
-    timers->RegisterTimer(900, send_chat_msg);
-
-    //we also create a timer to clear the ip cache sometime
-    timers->RegisterTimer(1800, resetIpCache);
+    // this send message every 15 minutes in the chat about the map
+    timers->RegisterTimer(900000, send_chat_msg);
 
     //this send a message on the start of the plugin
     std::string message = "[Hurting-Plugin] built on " + std::string(__DATE__) + " " + std::string(__TIME__) + " started \n";
@@ -279,6 +275,12 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
 
 }
 
+void OnGameEnd(unsigned char winner)
+{
+    // we clear the ipcache at the end to save RAM
+    ipcache.clear();
+}
+
 //some functions 
 void send_chat_msg()
 {
@@ -371,9 +373,4 @@ void add_everyone_to_db(const char* msg, const char* type)
             add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, type);
         }
     }
-}
-
-void resetIpCache()
-{
-    ipcache.clear();
 }
