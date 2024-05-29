@@ -338,19 +338,30 @@ std::string getCountryCode(const char* ip)
     char path[21];
     strcat(path, "/json/");
     strcat(path, ip);
+
+
+    print(("[Hurting-Plugin] Get on" + std::string(path)).c_str());
+
+
     HTTPRequest* ipAPIrequest = http->GenerateRequest("ip-api.com");
     ipAPIrequest->Get(path);
 
+
     const char* body = ipAPIrequest->GetBody();
     JSONObject* root = json->Parse(body);
+    
     if (root)
     {
         rapidjson::Document &document = root->document;
-        if (document.HasMember("countryCode") && document["status"].GetBool())
+        if (document["status"].GetString() == "success")
         {
             std::string country = document["countryCode"].GetString();
             ipcache.addToCache(ip, country);
             return country;
+        }
+        else
+        {
+            print("[Hurting-Plugin] Error while obtaining country code !");
         }
     }
 
