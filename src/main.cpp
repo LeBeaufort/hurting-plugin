@@ -345,7 +345,7 @@ std::string getCountryCode(const char* ip)
 
     
     char message_url[100] = "[Hurting-Plugin] Get on : ";
-    strcat(message, path);
+    strcat(message_url, path);
     
     print(message_url);
 
