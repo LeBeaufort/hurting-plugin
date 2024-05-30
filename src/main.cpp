@@ -332,6 +332,7 @@ std::string getCountryCode(const char* ip)
 {
     char message_ip[100] = "[Hurting-Plugin] The IP is ";
     strcat(message_ip, ip);
+    strcat(message_ip, "\n");
     print(message_ip);
 
     if (ipcache.isCached(ip))
@@ -346,6 +347,7 @@ std::string getCountryCode(const char* ip)
     
     char message_url[100] = "[Hurting-Plugin] Get on : ";
     strcat(message_url, path);
+    strcat(message_url, "\n");
     print(message_url);
 
 
