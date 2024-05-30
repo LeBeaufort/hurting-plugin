@@ -331,8 +331,8 @@ void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* m
 std::string getCountryCode(const char* ip)
 {
     char message_ip[100] = "[Hurting-Plugin] The IP is ";
-    strcat(message_url, ip);
-    print(message_url);
+    strcat(message_ip, ip);
+    print(message_ip);
 
     if (ipcache.isCached(ip))
     {
@@ -346,7 +346,6 @@ std::string getCountryCode(const char* ip)
     
     char message_url[100] = "[Hurting-Plugin] Get on : ";
     strcat(message_url, path);
-    
     print(message_url);
 
 
