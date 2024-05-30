@@ -332,7 +332,7 @@ std::string getCountryCode(const char* ip)
 {
     char message_ip[100] = "[Hurting-Plugin] The IP is ";
     strcat(message_url, ip);
-    print(message);
+    print(message_url);
 
     if (ipcache.isCached(ip))
     {
