@@ -330,6 +330,10 @@ void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* m
 
 std::string getCountryCode(const char* ip)
 {
+    char message_ip[100] = "[Hurting-Plugin] The IP is ";
+    strcat(message_url, ip);
+    print(message);
+
     if (ipcache.isCached(ip))
     {
         return ipcache.getCountryCode(ip);
@@ -339,8 +343,11 @@ std::string getCountryCode(const char* ip)
     strcat(path, "/json/");
     strcat(path, ip);
 
-
-    print(("[Hurting-Plugin] Get on" + std::string(path)).c_str());
+    
+    char message_url[100] = "[Hurting-Plugin] Get on : ";
+    strcat(message, path);
+    
+    print(message_url);
 
 
     HTTPRequest* ipAPIrequest = http->GenerateRequest("ip-api.com");
@@ -349,7 +356,7 @@ std::string getCountryCode(const char* ip)
 
     const char* body = ipAPIrequest->GetBody();
     JSONObject* root = json->Parse(body);
-    
+
     if (root)
     {
         rapidjson::Document &document = root->document;
