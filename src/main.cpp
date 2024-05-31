@@ -354,24 +354,39 @@ std::string getCountryCode(const char* ip)
     HTTPRequest* ipAPIrequest = http->GenerateRequest("ip-api.com");
     ipAPIrequest->Get(path);
 
-
-    const char* body = ipAPIrequest->GetBody();
-    JSONObject* root = json->Parse(body);
-
-    if (root)
+    try 
     {
-        rapidjson::Document &document = root->document;
-        if (document["status"].GetString() == "success")
+        const char* body = ipAPIrequest->GetBody();
+        JSONObject* root = json->Parse(body);
+
+        if (root)
         {
-            std::string country = document["countryCode"].GetString();
-            ipcache.addToCache(ip, country);
-            return country;
-        }
-        else
-        {
-            print("[Hurting-Plugin] Error while obtaining country code !");
+            rapidjson::Document &document = root->document;
+            if (document["status"].GetString() == "success")
+            {
+                std::string country = document["countryCode"].GetString();
+                ipcache.addToCache(ip, country);
+                return country;
+            }
+            else
+            {
+                print("[Hurting-Plugin] Error while obtaining country code !\n");
+            }
         }
     }
+    catch (...)
+    {
+        std::string message = "[Hurting-Plugin] infos about failure:\n[Hurting-Plugin]   IP : ";
+        message += ip;
+        message += "\n[Hurting-Plugin]   route: ";
+        message += path;
+        message += "\n";
+
+        print("[Hurting-Plugin] FAILED to get country code !\n");
+        print(message.c_str());
+    }
+
+    
 
     return "  ";
 }
