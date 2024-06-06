@@ -357,6 +357,13 @@ std::string getCountryCode(const char* ip)
     try 
     {
         const char* body = ipAPIrequest->GetBody();
+
+        if (body == "")
+        {
+            print("[Hurting-Plugin] Body is empty ! \n");
+            return "  ";
+        }
+
         JSONObject* root = json->Parse(body);
 
         if (root)
@@ -385,8 +392,6 @@ std::string getCountryCode(const char* ip)
         print("[Hurting-Plugin] FAILED to get country code !\n");
         print(message.c_str());
     }
-
-    
 
     return "  ";
 }
