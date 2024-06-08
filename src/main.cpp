@@ -363,11 +363,10 @@ std::string getCountryCode(const char* ip)
             print("[Hurting-Plugin] Body is empty ! \n");
             return "  ";
         }
-
-        JSONObject* root = json->Parse(body);
-
-        if (root)
+        else
         {
+            JSONObject* root = json->Parse(body);
+
             rapidjson::Document &document = root->document;
             if (document["status"].GetString() == "success")
             {
@@ -380,6 +379,7 @@ std::string getCountryCode(const char* ip)
                 print("[Hurting-Plugin] Error while obtaining country code !\n");
             }
         }
+            
     }
     catch (...)
     {
