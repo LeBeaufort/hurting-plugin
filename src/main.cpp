@@ -1,6 +1,5 @@
 #include "sentences.hpp"
 #include "playereventsmanager.hpp"
-#include "ipcache.hpp"
 #include <string>
 #include <ctime>
 
@@ -22,10 +21,8 @@ Configuration *config = nullptr;
 Logger *logger = nullptr;
 Timers *timers = nullptr;
 HTTP *http = nullptr;
-JSON *json = nullptr;
 
 PlayerEventsManager eventsManager;
-IpCache ipcache;
 
 void OnProgramLoad(const char *pluginName, const char *mainFilePath)
 {
@@ -38,12 +35,10 @@ void OnProgramLoad(const char *pluginName, const char *mainFilePath)
     logger = new Logger(mainFilePath, pluginName);
     timers = new Timers();
     http = new HTTP();
-    json = new JSON();
 }
 
 void send_chat_msg();
-std::string getCountryCode(const char* ip);
-void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type);
+void add_to_db(const char* name, uint64_t steamID, const char* message, const char* type);
 void add_everyone_to_db(const char* msg, const char* type);
 
 void OnPluginStart()
@@ -54,7 +49,7 @@ void OnPluginStart()
     if (db->IsConnected())
     {
         // if it is connected, we create the table if it is not
-        db->Query("CREATE TABLE IF NOT EXISTS `HurtingP_hurts` (`id` INT NULL AUTO_INCREMENT,`name` VARCHAR(256) NOT NULL,`steamID` DECIMAL(17,0) NOT NULL,`ip` VARCHAR(15) NOT NULL,`countryCode` VARCHAR(2) NULL,`message` VARCHAR(512) NOT NULL,`type` VARCHAR(45) NOT NULL,`hurtTime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (`id`));");  
+        db->Query("CREATE TABLE IF NOT EXISTS `HurtingP_hurts` (`id` INT NULL AUTO_INCREMENT,`name` VARCHAR(256) NOT NULL,`steamID` DECIMAL(17,0) NOT NULL,`message` VARCHAR(512) NOT NULL,`type` VARCHAR(45) NOT NULL,`time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (`id`));");  
     }
     else
     {
@@ -105,7 +100,7 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         player->SendMsg(HudDestination(4), message);
         if (! player->IsFakeClient())
         {
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "selfFlash");
+            add_to_db(player->GetName(), player->GetSteamID(), message, "selfFlash");
         }
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
@@ -116,7 +111,7 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         player->SendMsg(HudDestination(4), message);
         if (! player->IsFakeClient())
         {
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), message, "teamFlash");
+            add_to_db(player->GetName(), player->GetSteamID(), message, "teamFlash");
         }
 
         //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
@@ -135,7 +130,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             attacker->SendMsg(HudDestination(4), msg);
             if (! player->IsFakeClient())
             {
-                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "TeamKill");   
+                add_to_db(player->GetName(), player->GetSteamID(), msg, "TeamKill");   
             }
         }
         // we check for failed fake
@@ -145,7 +140,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             player->SendMsg(HudDestination(4), msg);
             if (! player->IsFakeClient())
             {
-               add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "FailedFake");
+               add_to_db(player->GetName(), player->GetSteamID(), msg, "FailedFake");
             }
         }
         // for bad reload
@@ -155,7 +150,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             player->SendMsg(HudDestination(4), msg);
             if (! player->IsFakeClient())
             {
-                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "badReload");
+                add_to_db(player->GetName(), player->GetSteamID(), msg, "badReload");
             }
         }
         else
@@ -169,11 +164,11 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
 
             if (! player->IsFakeClient())
             {
-                add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msgP, "death");
+                add_to_db(player->GetName(), player->GetSteamID(), msgP, "death");
             }
             if (! attacker->IsFakeClient())
             {
-                add_to_db(attacker->GetName(), attacker->GetSteamID(), attacker->GetIPAddress(), msgA, "kill");
+                add_to_db(attacker->GetName(), attacker->GetSteamID(), msgA, "kill");
             }
         }
     }
@@ -188,7 +183,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             assister->SendMsg(HudDestination(4), msg);
             if (! assister->IsFakeClient())
             {
-                add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assistOnMate");
+                add_to_db(assister->GetName(), assister->GetSteamID(), msg, "assistOnMate");
             }
         }
         else
@@ -198,7 +193,7 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             assister->SendMsg(HudDestination(4), msg);
             if (! assister->IsFakeClient())
             {
-                add_to_db(assister->GetName(), assister->GetSteamID(), assister->GetIPAddress(), msg, "assist");
+                add_to_db(assister->GetName(), assister->GetSteamID(), msg, "assist");
             }
         }
     }
@@ -209,7 +204,7 @@ bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 {
     const char* msg = GetChatSentence(teamonly);
     player->SendMsg(HudDestination(4), msg);
-    add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "chat");
+    add_to_db(player->GetName(), player->GetSteamID(), msg, "chat");
     return true;
 }
 
@@ -220,7 +215,7 @@ void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
     player->SendMsg(HudDestination(4), msg);
     if (! player->IsFakeClient())
     {
-        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoy");
+        add_to_db(player->GetName(), player->GetSteamID(), msg, "decoy");
     }
     
 }
@@ -232,7 +227,7 @@ void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
     player->SendMsg(HudDestination(4), msg);
     if (! player->IsFakeClient())
     {
-        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "decoyStop");
+        add_to_db(player->GetName(), player->GetSteamID(), msg, "decoyStop");
     }
 }
 
@@ -242,7 +237,7 @@ void OnPlayerFallDamage(Player* player, float damage)
     player->SendMsg(HudDestination(4), msg);
     if (! player->IsFakeClient())
     {
-        add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, "fallDamage");
+        add_to_db(player->GetName(), player->GetSteamID(), msg, "fallDamage");
     }  
 }
 
@@ -275,12 +270,6 @@ void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message,
 
 }
 
-void OnGameEnd(unsigned char winner)
-{
-    // we clear the ipcache at the end to save RAM
-    ipcache.clear();
-}
-
 //some functions 
 void send_chat_msg()
 {
@@ -295,105 +284,24 @@ void send_chat_msg()
     
 }
 
-void add_to_db(const char* name, uint64_t steamID, const char* ip, const char* message, const char* type)
+void add_to_db(const char* name, uint64_t steamID, const char* message, const char* type)
 {
-    std::string CC = getCountryCode(ip);
 
     /*full SQL request is
-    INSERT INTO `database`.`HurtingP_hurts` (`name`, `steamID`, `ip`, `countryCode`, `message`, `type`) VALUES ('name', '012345678912345678', '154.025.654.265', 'fr', 'message', 'type');*/
-    std::string request = "";
-    if (CC != "  ")
-    {
-        request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`, `ip`, `countryCode`, `message`, `type`) VALUES ('";
-    }
-    else
-    {
-        request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`, `ip`, `message`, `type`) VALUES ('";
-    }
+    INSERT INTO `database`.`HurtingP_hurts` (`name`, `steamID`, `ip`, `countryCode`, `message`, `type`) VALUES ('name', '012345678912345678', 'message', 'type');*/
+    std::string request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`,`message`, `type`) VALUES ('";
 
+    // adding name and steamID
     request += std::string(name) + "', '";
     request += std::to_string(steamID) + "', '";
-    request += std::string(ip) + "', '";
-    if (CC != "  ")
-    {
-        request += CC + "', '";
-    }
-    // if the country code is null, we skip it and insert the message. If it is not we insert it
+
+    // adding the message
     request += std::string(message) + "', '";
     request += std::string(type) + "');"; //this end the request
 
     // now we escape the request to prevent SQL injection, then we send it to the database
     const char* EscapedRequest = db->EscapeString(request.c_str());
     db->Query(EscapedRequest);
-}
-
-
-std::string getCountryCode(const char* ip)
-{
-    char message_ip[100] = "[Hurting-Plugin] The IP is ";
-    strcat(message_ip, ip);
-    strcat(message_ip, "\n");
-    print(message_ip);
-
-    if (ipcache.isCached(ip))
-    {
-        return ipcache.getCountryCode(ip);
-    }
-
-    char path[21];
-    strcat(path, "/json/");
-    strcat(path, ip);
-
-    
-    char message_url[100] = "[Hurting-Plugin] Get on : ";
-    strcat(message_url, path);
-    strcat(message_url, "\n");
-    print(message_url);
-
-
-    HTTPRequest* ipAPIrequest = http->GenerateRequest("ip-api.com");
-    ipAPIrequest->Get(path);
-
-    try 
-    {
-        const char* body = ipAPIrequest->GetBody();
-
-        if (body == "")
-        {
-            print("[Hurting-Plugin] Body is empty ! \n");
-            return "  ";
-        }
-        else
-        {
-            JSONObject* root = json->Parse(body);
-
-            rapidjson::Document &document = root->document;
-            if (document["status"].GetString() == "success")
-            {
-                std::string country = document["countryCode"].GetString();
-                ipcache.addToCache(ip, country);
-                return country;
-            }
-            else
-            {
-                print("[Hurting-Plugin] Error while obtaining country code !\n");
-            }
-        }
-            
-    }
-    catch (...)
-    {
-        std::string message = "[Hurting-Plugin] infos about failure:\n[Hurting-Plugin]   IP : ";
-        message += ip;
-        message += "\n[Hurting-Plugin]   route: ";
-        message += path;
-        message += "\n";
-
-        print("[Hurting-Plugin] FAILED to get country code !\n");
-        print(message.c_str());
-    }
-
-    return "  ";
 }
 
 void add_everyone_to_db(const char* msg, const char* type)
@@ -409,7 +317,7 @@ void add_everyone_to_db(const char* msg, const char* type)
         
         if (! player->IsFakeClient())
         {
-            add_to_db(player->GetName(), player->GetSteamID(), player->GetIPAddress(), msg, type);
+            add_to_db(player->GetName(), player->GetSteamID(), msg, type);
         }
     }
 }
