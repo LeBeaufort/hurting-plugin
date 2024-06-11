@@ -10,12 +10,12 @@ Once you did it, you can get the plugin from the [action tab](https://github.com
 You will need to configure the database for this plugin. For this, edit the file `yourcs2server\game\csgo\addons\swiftly\configs\databases.json` and add a new connection by adding this at the end of the file : 
 ```
 "HURTINGP": {
-		"hostname": "",
-        "username": "",
-        "password": "",
-        "database": "",
-        "port": 3306
-    },
+	"hostname": "",
+    "username": "",
+    "password": "",
+    "database": "",
+    "port": 3306
+},
 ```
 
 You can now enjoy it !
