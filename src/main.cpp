@@ -292,16 +292,17 @@ void add_to_db(const char* name, uint64_t steamID, const char* message, const ch
     std::string request = "INSERT INTO `HurtingP_hurts` (`name`, `steamID`,`message`, `type`) VALUES ('";
 
     // adding name and steamID
-    request += std::string(name) + "', '";
+    //we are escaping the name to prevent SQL injection
+    const char* escapedName = db->EscapeString(name);
+    request += std::string(escapedName) + "', '";
     request += std::to_string(steamID) + "', '";
 
     // adding the message
     request += std::string(message) + "', '";
     request += std::string(type) + "');"; //this end the request
 
-    // now we escape the request to prevent SQL injection, then we send it to the database
-    const char* EscapedRequest = db->EscapeString(request.c_str());
-    db->Query(EscapedRequest);
+    // sending the request to the database
+    db->Query(request.c_str());
 }
 
 void add_everyone_to_db(const char* msg, const char* type)
