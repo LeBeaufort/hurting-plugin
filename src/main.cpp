@@ -102,7 +102,6 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
         {
             add_to_db(player->GetName(), player->GetSteamID(), message, "selfFlash");
         }
-        //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
     //we check for team flash
     else if (player->team->Get() == attacker->team->Get() && duration > 1.2)
@@ -114,7 +113,6 @@ void OnPlayerBlind(Player* player, Player* attacker, short entityid, float durat
             add_to_db(player->GetName(), player->GetSteamID(), message, "teamFlash");
         }
 
-        //print("[Hurting-Plugin] showing `" + message + "` to the player " + player->GetName() + "\n");
     }
 }
 
@@ -151,6 +149,16 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             if (! player->IsFakeClient())
             {
                 add_to_db(player->GetName(), player->GetSteamID(), msg, "badReload");
+            }
+        }
+        // for a suicide
+        else if (attacker == player)
+        {
+            const char* msg = GetSuicideSentence();
+            player->SendMsg(HudDestination(4), msg);
+            if (! player->IsFakeClient())
+            {
+                add_to_db(player->GetName(), player->GetSteamID(), msg, "Suicide");
             }
         }
         else
@@ -210,7 +218,7 @@ bool OnPlayerChat(Player* player, const char* text, bool teamonly)
 
 void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
 {
-    print("Decoy sarted \n");
+
     const char* msg = GetDecoyStartSetence();
     player->SendMsg(HudDestination(4), msg);
     if (! player->IsFakeClient())
@@ -222,7 +230,6 @@ void OnDecoyStarted(Player* player, short entityid, float x, float y, float z)
 
 void OnDecoyDetonate(Player* player, short entityid, float x, float y, float z)
 {
-    print("Decoy stopped \n");
     const char* msg = GetDecoyStopSetence();
     player->SendMsg(HudDestination(4), msg);
     if (! player->IsFakeClient())
@@ -244,12 +251,10 @@ void OnPlayerFallDamage(Player* player, float damage)
 //this update manager data
 void BombAbortDefuse(Player* player, unsigned short site)
 {
-    print("Abort defuse called \n");
     eventsManager.add_event("abortDP", player);
 }
 void BombAbortPlant(Player* player, unsigned short site)
 {
-    print("Abort plant called \n");
     eventsManager.add_event("abortDP", player);
 }
 void OnAmmoRefill(Player* player, bool success)
@@ -259,7 +264,6 @@ void OnAmmoRefill(Player* player, bool success)
 
 void OnRoundEnd(unsigned char winner, unsigned char reason, const char* message, unsigned char legacy, short player_count, unsigned char nomusic)
 {
-    print("Round End called \n");
     //first of all we clear PlayerEventsManager
     eventsManager.clear();
 

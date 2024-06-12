@@ -17,5 +17,6 @@ const char* GetDecoyStopSetence();
 const char* GetFakeFailedSentence();
 const char* GetRoundEndSentence();
 const char* GetBadReloadSentence();
+const char* GetSuicideSentence();
 
 #endif

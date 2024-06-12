@@ -30,19 +30,18 @@ void PlayerEventsManager::add_event(std::string type, Player* player)
     {
         //we change the time
         this->events[index].time = std::time(0);
-        print("Event alerady exist. It has been updated \n");
+        print("[Hurting-Plugin] [PlayerEventsManager] Event alerady exist. It has been updated \n");
     }
     else
     {
         // if it does exist yet, we create it
         this->events.push_back(PlayerEvent(type, player));
-        print("Event created");
+        print("[Hurting-Plugin] [PlayerEventsManager] Event created \n");
     }
 }
 
 int PlayerEventsManager::getTimeithappen(std::string type, Player* player)
 {
-    print("getTimeitHappen called \n");
     int index = this->getIndexOf(type, player);
     if (index != -1)
     {

@@ -171,3 +171,12 @@ const char* GetBadReloadSentence()
 
     return sentences[rand() % len];
 }
+
+const char* GetSuicideSentence()
+{
+    const char* sentences[] = {"are you depressed ?", "you just gave 300$ to the enemy team", "Maybe you should stop playing this game ?"};
+    srand(time(NULL));
+    unsigned long long len = sizeof(sentences) / sizeof(sentences[0]);
+
+    return sentences[rand() % len];
+}
