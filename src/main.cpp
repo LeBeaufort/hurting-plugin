@@ -121,8 +121,18 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
     // checking if the player and the attacker are valids players
     if (player && attacker)
     {
+        // for a suicide
+        if (attacker == player)
+        {
+            const char* msg = GetSuicideSentence();
+            player->SendMsg(HudDestination(4), msg);
+            if (! player->IsFakeClient())
+            {
+                add_to_db(player->GetName(), player->GetSteamID(), msg, "Suicide");
+            }
+        }
         // we check for a team kill
-        if (player->team->Get() == attacker->team->Get())
+        else if (player->team->Get() == attacker->team->Get())
         {
             const char* msg = GetTeamKillSentence();
             attacker->SendMsg(HudDestination(4), msg);
@@ -149,16 +159,6 @@ void OnPlayerDeath(Player* player, Player* attacker, Player* assister, bool assi
             if (! player->IsFakeClient())
             {
                 add_to_db(player->GetName(), player->GetSteamID(), msg, "badReload");
-            }
-        }
-        // for a suicide
-        else if (attacker == player)
-        {
-            const char* msg = GetSuicideSentence();
-            player->SendMsg(HudDestination(4), msg);
-            if (! player->IsFakeClient())
-            {
-                add_to_db(player->GetName(), player->GetSteamID(), msg, "Suicide");
             }
         }
         else
